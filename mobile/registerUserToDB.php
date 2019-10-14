@@ -9,9 +9,9 @@ $avatar = $_POST['avatar'];
 $gender = $_POST['gender'];
 $phone = $_POST['phone'];
 $user = $db->insertUserToDB($UID,$email,$fullnames,$avatar,$gender,$phone);
-if ($user == null){
+if ($user == "existed"){
     $response["error"] = true;
-    $response["error_msg"] = "Este usuario ya existe";
+    $response["error_msg"] = "Este usuario ya existe: ".$email;
     echo json_encode($response);
 }elseif ($user){
     $response["error"] = false;

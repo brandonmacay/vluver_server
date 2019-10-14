@@ -151,24 +151,29 @@ function time_passed_comments($get_timestamp) {
     }
 
     public function insertUserToDB($uid, $email, $fullnames, $avatar, $gender,$phone){
-        $stmt = $this->conn->prepare("SELECT *from users WHERE email = ?");
+        $stmt = $this->conn->prepare("SELECT email FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows > 0) {
-            return null;
+            $stmt->close();
+            return "existed";
+
         } else {
-            $stmt = $this->conn->prepare("INSERT INTO users(unique_id, email, fullnames,avatar,genre,phone) VALUES(?, ?, ?, ?, ?, ?)");
+            $stmt->close();
+            $stmt = $this->conn->prepare("INSERT INTO users(unique_id, email, fullnames, avatar, genre, phone) VALUES(?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("ssssss",$uid,$email,$fullnames,$avatar,$gender,$phone);
             $result = $stmt->execute();
-            $stmt->close();
+            $stmt->store_result();
             if ($result){
                 /*$stmt = $this->conn->prepare("SELECT * FROM users WHERE email = ?");
                 $stmt->bind_param("s", $email);
                 $stmt->execute();
                 $user = $stmt->get_result()->fetch_assoc();*/
+                $stmt->close();
                 return true;
             }else{
+                $stmt->close();
                 return false;
             }
 
